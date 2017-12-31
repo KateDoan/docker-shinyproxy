@@ -1,0 +1,42 @@
+version: '2'
+
+services:
+
+  ldap-host:
+    image: jiewpeng/openldap:1.1.9
+    networks:
+      mynet:
+    ports:
+      - 389:389
+    environment:
+      - LDAP_ORGANISATION="My Company"
+      - LDAP_DOMAIN=example.org
+      - LDAP_READONLY_USER=true
+      - LDAP_TLS=false
+    restart: unless-stopped
+    command: --copy-service
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+  ldap-admin:
+    image: osixia/phpldapadmin:0.7.1
+    networks:
+      mynet:
+    ports:
+      - 6080:6080
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=ldap-host
+      - PHPLDAPADMIN_HTTPS=false
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+networks:
+  mynet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.0.2/16
+          gateway: 172.31.0.2
