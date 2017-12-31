@@ -1,4 +1,4 @@
-FROM jiewpeng/mro:3.4.0
+FROM jiewpeng/mro:3.4.2
 
 # copy app to the image
 RUN mkdir /root/simpleapp
